@@ -1,9 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface Company {
   id: number
   name: string
-  specificity: string
+  address: string
 }
 
 interface CompaniesState {
@@ -12,16 +12,22 @@ interface CompaniesState {
 
 const initialState: CompaniesState = {
   companies: [
-    { id: 1, name: 'Компания 1', specificity: 'IT' },
-    { id: 2, name: 'Компания 2', specificity: 'Строительство' },
-    { id: 2, name: 'Компания 3', specificity: 'Продажи' },
+    { id: 1, name: 'Компания 1', address: 'Адрес 1' },
+    { id: 2, name: 'Компания 2', address: 'Адрес 2' },
+    { id: 3, name: 'Компания 3', address: 'Адрес 3' },
   ],
 }
 
 const companiesSlice = createSlice({
   name: 'companies',
   initialState,
-  reducers: {},
+  reducers: {
+    addCompany: (state, action: PayloadAction<Company>) => {
+        state.companies.push(action.payload);
+      },
+  },
 })
+
+export const { addCompany } = companiesSlice.actions;
 
 export default companiesSlice.reducer
