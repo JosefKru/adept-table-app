@@ -1,23 +1,15 @@
-import { useState } from 'react'
 import { RootState } from '../../store/store'
 import './CompanyTable.css'
 import { useSelector } from 'react-redux'
 
-const CompanyTable = () => {
+interface IProps {
+  selectedIds: string[]
+  onChangeSelectAll: (select: boolean) => void
+  onChangeSelectRow: (id: string, select: boolean) => void
+}
+
+const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow }: IProps) => {
   const companies = useSelector((state: RootState) => state.companies.companies)
-  const [selectedIds, setSelectedIds] = useState<number[]>([])
-
-  console.log(selectedIds)
-
-  const handleSelectAll = (select: boolean) => {
-    setSelectedIds(select ? companies.map((item) => item.id) : [])
-  }
-
-  const handleRowSelect = (id: number, select: boolean) => {
-    setSelectedIds((prevState) =>
-      select ? [...prevState, id] : prevState.filter((selectedId) => selectedId !== id)
-    )
-  }
 
   return (
     <table>
@@ -26,7 +18,7 @@ const CompanyTable = () => {
           <th>
             <input
               type='checkbox'
-              onChange={(e) => handleSelectAll(e.target.checked)}
+              onChange={(e) => onChangeSelectAll(e.target.checked)}
               checked={selectedIds.length === companies.length}
             />
           </th>
@@ -35,19 +27,23 @@ const CompanyTable = () => {
         </tr>
       </thead>
       <tbody>
-        {companies.map((com) => (
-          <tr key={com.id} className={selectedIds.includes(com.id) ? 'selected' : ''}>
-            <td>
-              <input
-                type='checkbox'
-                checked={selectedIds.includes(com.id)}
-                onChange={(e) => handleRowSelect(com.id, e.target.checked)}
-              />
-            </td>
-            <td>{com.name}</td>
-            <td>{com.address}</td>
-          </tr>
-        ))}
+        {!companies.length ? (
+          <div>Таблица не заполнена</div>
+        ) : (
+          companies.map((com) => (
+            <tr key={com.id} className={selectedIds.includes(com.id) ? 'selected' : ''}>
+              <td>
+                <input
+                  type='checkbox'
+                  checked={selectedIds.includes(com.id)}
+                  onChange={(e) => onChangeSelectRow(com.id, e.target.checked)}
+                />
+              </td>
+              <td>{com.name}</td>
+              <td>{com.address}</td>
+            </tr>
+          ))
+        )}
       </tbody>
     </table>
   )

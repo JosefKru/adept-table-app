@@ -1,10 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-interface Company {
-  id: number
-  name: string
-  address: string
-}
+import { Company } from '../components/types/models'
 
 interface CompaniesState {
   companies: Company[]
@@ -12,9 +7,9 @@ interface CompaniesState {
 
 const initialState: CompaniesState = {
   companies: [
-    { id: 1, name: 'Компания 1', address: 'Адрес 1' },
-    { id: 2, name: 'Компания 2', address: 'Адрес 2' },
-    { id: 3, name: 'Компания 3', address: 'Адрес 3' },
+    { id: Date.now().toString() + '-1', name: 'Компания 1', address: 'Адрес 1' },
+    { id: Date.now().toString() + '-2', name: 'Компания 2', address: 'Адрес 2' },
+    { id: Date.now().toString() + '-3', name: 'Компания 3', address: 'Адрес 3' },
   ],
 }
 
@@ -23,11 +18,14 @@ const companiesSlice = createSlice({
   initialState,
   reducers: {
     addCompany: (state, action: PayloadAction<Company>) => {
-        state.companies.push(action.payload);
-      },
+      state.companies.push(action.payload)
+    },
+    removeCompany: (state, action) => {
+      state.companies = state.companies.filter((com) => com.id !== action.payload)
+    },
   },
 })
 
-export const { addCompany } = companiesSlice.actions;
+export const { addCompany, removeCompany } = companiesSlice.actions
 
 export default companiesSlice.reducer

@@ -2,34 +2,59 @@ import { useDispatch, useSelector } from 'react-redux'
 import './App.css'
 import CompanyTable from './components/CompanyTable/CompanyTable'
 import { RootState } from './store/store'
-import { addCompany } from './slices/companiesSlice'
+import { addCompany, removeCompany } from './slices/companiesSlice'
+import { Company } from './components/types/models'
+import { useState } from 'react'
 
 function App() {
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+
   const companies = useSelector((state: RootState) => state.companies.companies)
   const dispatch = useDispatch()
 
-  console.log(companies)
+  const handleSelectAll = (select: boolean) => {
+    setSelectedIds(select ? companies.map((item) => item.id) : [])
+  }
+
+  const handleSelectRow = (id: string, select: boolean) => {
+    setSelectedIds((prevState) =>
+      select ? [...prevState, id] : prevState.filter((selectedId) => selectedId !== id)
+    )
+  }
 
   const handleAddCompany = () => {
-    const nextValCom = companies[companies.length - 1].id + 1
-    const newCompany = {
-      id: nextValCom,
+    const nextValCom = companies.length + 1
+    const newCompany: Company = {
+      id: Date.now().toString(),
       name: `Компания ${nextValCom}`,
-      address: `Fдрес ${nextValCom}`,
+      address: `Адрес ${nextValCom}`,
     }
     dispatch(addCompany(newCompany))
+  }
+
+  const handleRemoveCompany = () => {
+    selectedIds.forEach((id) => {
+      dispatch(removeCompany(id))
+    })
+    setSelectedIds([])
   }
 
   return (
     <div className='main-containter'>
       <h1 className='title'>Список компаний</h1>
-      <CompanyTable />
+      <CompanyTable
+        selectedIds={selectedIds}
+        onChangeSelectRow={handleSelectRow}
+        onChangeSelectAll={handleSelectAll}
+      />
 
       <div className='actions'>
         <button onClick={handleAddCompany} className='btn-add'>
           Добавить
         </button>
-        <button className='btn-remove'>Удалить выбранные</button>
+        <button onClick={handleRemoveCompany} className='btn-remove'>
+          Удалить выбранные
+        </button>
       </div>
     </div>
   )
