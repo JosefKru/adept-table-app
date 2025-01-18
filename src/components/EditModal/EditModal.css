@@ -36,14 +36,8 @@
   color: #fff;
 }
 
-.modal-content button {
-  border: none;
-  outline: none;
-}
 .modal-content button:hover {
   background-color: #3f3f3f;
-  border: none;
-  outline: none;
 }
 
 .modal-content .actions {

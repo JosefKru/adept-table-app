@@ -32,3 +32,28 @@ th {
 .selected {
   background-color: #666666;
 }
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 18px;
+  cursor: pointer;
+}
+
+.menu span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: #a99191;
+}
+
+.menu:hover span {
+  background-color: #2a2a2a;
+}
+
+.scrollbar {
+  padding: 20px;
+  overflow-y: auto;
+  height: 450px;
+}

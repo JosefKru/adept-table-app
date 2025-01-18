@@ -1,0 +1,26 @@
+
+.actions {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  
+  .btn-add {
+    background-color: #44a95c;
+  }
+  
+  .btn-remove {
+    background-color: #982733;
+  }
+  
+  button {
+    border: none;
+    outline: none;
+  }
+  
+  button:focus {
+    border: none;
+    outline: none;
+  }
+  

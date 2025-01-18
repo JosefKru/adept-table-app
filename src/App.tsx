@@ -5,6 +5,7 @@ import { RootState } from './store/store'
 import { addCompany, removeCompany } from './slices/companiesSlice'
 import { Company } from './components/types/models'
 import { useState } from 'react'
+import ActionsButton from './components/ActionsButton/ActionsButton'
 
 function App() {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
@@ -40,23 +41,23 @@ function App() {
   }
 
   return (
-    <div className='main-containter'>
-      <h1 className='title'>Список компаний</h1>
-      <CompanyTable
-        selectedIds={selectedIds}
-        onChangeSelectRow={handleSelectRow}
-        onChangeSelectAll={handleSelectAll}
-      />
-
-      <div className='actions'>
-        <button onClick={handleAddCompany} className='btn-add'>
-          Добавить
-        </button>
-        <button onClick={handleRemoveCompany} className='btn-remove'>
-          Удалить выбранные
-        </button>
+    <>
+      <div className='main-containter'>
+        <h1 className='title'>Список компаний</h1>
+        <CompanyTable
+          selectedIds={selectedIds}
+          onChangeSelectRow={handleSelectRow}
+          onChangeSelectAll={handleSelectAll}
+          companies={companies}
+        />
+        <ActionsButton onAddCompany={handleAddCompany} onRemoveCompany={handleRemoveCompany} />
       </div>
-    </div>
+      <p className='description'>
+        <strong>Динамическая подгрузка столбцов:</strong> изначально отображается 3 столбца (с лимитом в 15
+        видимых записей), а при добавлении новых записей и достижении конца списка автоматически подгружаются
+        по 10 дополнительных записей. Так же, нажав на три точки, можно редактировать выбранный столбец.
+      </p>
+    </>
   )
 }
 

@@ -33,10 +33,10 @@ const EditModal = ({ company, onClose, onSave }: IEditModalProps) => {
             onChange={(e) => setNewValues({ ...newValues, name: e.target.value })}
           />
         </label>
-        <label htmlFor='adress'>
+        <label htmlFor='address'>
           Адрес:
           <input
-            id='adress'
+            id='address'
             value={newValues.address}
             onChange={(e) => setNewValues({ ...newValues, address: e.target.value })}
           />
