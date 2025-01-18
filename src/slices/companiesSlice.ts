@@ -17,15 +17,18 @@ const companiesSlice = createSlice({
   name: 'companies',
   initialState,
   reducers: {
-    addCompany: (state, action: PayloadAction<Company>) => {
+    addCompany: (state: CompaniesState, action: PayloadAction<Company>) => {
       state.companies.push(action.payload)
     },
-    removeCompany: (state, action) => {
+    removeCompany: (state: CompaniesState, action: PayloadAction<string>) => {
       state.companies = state.companies.filter((com) => com.id !== action.payload)
+    },
+    editCompany: (state: CompaniesState, action: PayloadAction<Company>) => {
+      state.companies = state.companies.map((com) => (com.id === action.payload.id ? action.payload : com))
     },
   },
 })
 
-export const { addCompany, removeCompany } = companiesSlice.actions
+export const { addCompany, removeCompany, editCompany } = companiesSlice.actions
 
 export default companiesSlice.reducer
