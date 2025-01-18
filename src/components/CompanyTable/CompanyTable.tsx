@@ -61,11 +61,11 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
                 <input
                   type='checkbox'
                   onChange={(e) => onChangeSelectAll(e.target.checked)}
-                  checked={selectedIds.length === companies.length}
+                  checked={selectedIds.length === companies.length && companies.length !== 0}
                 />
               </th>
               <th>Название компании</th>
-              <th>Специализация</th>
+              <th colSpan={2}>Адрес</th>
             </tr>
           </thead>
           <tbody>
@@ -106,7 +106,7 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
         {isLoading && <div className='loading-indicator'>Загрузка...</div>}
       </div>
       {selectedCompany && (
-        <EditModal company={selectedCompany} onClose={handleCloseModal} onSave={handleSaveCompany} />
+        <EditModal company={selectedCompany} onClose={handleCloseModal} onSave={handleSaveCompany}  />
       )}
     </>
   )

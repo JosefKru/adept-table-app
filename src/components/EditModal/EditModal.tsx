@@ -16,21 +16,25 @@ const EditModal = ({ company, onClose, onSave }: IEditModalProps) => {
 
   if (!company) return null
 
-  const handleSave = () => {
-    onSave({ ...company, ...newValues })
-    onClose()
+  const handleSubmit = () => {
+    if (newValues.address && newValues.name) {
+      onSave({ ...company, ...newValues })
+      onClose()
+    }
   }
 
   return (
     <div className='modal-overlay'>
-      <div className='modal-content'>
-        <h3>Редактировать компанию</h3>
+      <form className='modal-content' onSubmit={handleSubmit}>
+        <h3>Редактор компании</h3>
         <label htmlFor='name'>
           Название:
           <input
             id='name'
             value={newValues.name}
             onChange={(e) => setNewValues({ ...newValues, name: e.target.value })}
+            required
+            maxLength={30}
           />
         </label>
         <label htmlFor='address'>
@@ -39,13 +43,15 @@ const EditModal = ({ company, onClose, onSave }: IEditModalProps) => {
             id='address'
             value={newValues.address}
             onChange={(e) => setNewValues({ ...newValues, address: e.target.value })}
+            required
+            maxLength={40}
           />
         </label>
         <div className='actions'>
-          <button onClick={handleSave}>Сохранить</button>
+          <button type='submit'>Сохранить</button>
           <button onClick={onClose}>Закрыть</button>
         </div>
-      </div>
+      </form>
     </div>
   )
 }

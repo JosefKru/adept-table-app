@@ -1,5 +1,5 @@
 table {
-  width: 100%;
+  width: 500px;
   border-collapse: collapse;
   margin: 10px 0px;
   text-align: left;
@@ -21,7 +21,6 @@ tbody tr {
 
 tbody tr:hover {
   background-color: #6d6d6d;
-  cursor: pointer;
 }
 
 td,
@@ -37,7 +36,9 @@ th {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-items: center;
   height: 18px;
+  width: 30px;
   cursor: pointer;
 }
 
