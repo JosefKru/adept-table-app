@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
 import EditModal from '../EditModal/EditModal'
 import './CompanyTable.css'
-import { useDispatch } from 'react-redux'
-import { Company } from '../types/models'
-import { editCompany } from '../../slices/companiesSlice'
-import { ROW_HEIGHT, VISIBLE_ROWS } from '../../variables/const'
+import { Company } from '../../types/models'
+import { VISIBLE_ROWS } from '../../variables/const'
+import { useVirtualScroll } from '../../hooks/useVirtualScroll'
+import { useModal } from '../../hooks/useModal'
 
 interface IProps {
   selectedIds: string[]
@@ -14,52 +13,9 @@ interface IProps {
 }
 
 const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, companies }: IProps) => {
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
-  const [start, setStart] = useState(0)
+  const { start, tableRef, getTopHeight, getBottomHeight } = useVirtualScroll(companies.length)
 
-  const tableRef = useRef<HTMLDivElement | null>(null)
-
-  const dispatch = useDispatch()
-
-  const handleSaveCompany = (company: Company) => {
-    if (company) {
-      dispatch(editCompany(company))
-    }
-  }
-
-  useEffect(() => {
-    const element = tableRef.current
-
-    if (element) {
-      const handleScroll = (event: Event) => {
-        const target = event.target as HTMLDivElement
-        setStart(Math.floor(target.scrollTop / ROW_HEIGHT))
-      }
-
-      element.addEventListener('scroll', handleScroll)
-
-      return () => {
-        element.removeEventListener('scroll', handleScroll)
-      }
-    }
-  }, [companies])
-
-  const handleCloseModal = () => {
-    setSelectedCompany(null)
-  }
-
-  const handleEditCompany = (company: Company, event: React.MouseEvent) => {
-    event.stopPropagation()
-    setSelectedCompany(company)
-  }
-
-  const getTopHeight = () => {
-    return ROW_HEIGHT * start
-  }
-
-  const getButtomHeight = () => {
-    return ROW_HEIGHT * (companies.length - (start + VISIBLE_ROWS))
-  }
+  const { selectedCompany, handleCloseModal, handleSaveCompany, handleEditCompany } = useModal()
 
   return (
     <>
@@ -70,6 +26,7 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
             <tr>
               <th>
                 <input
+                  name='select-all'
                   type='checkbox'
                   onChange={(e) => onChangeSelectAll(e.target.checked)}
                   checked={selectedIds.length === companies.length && companies.length !== 0}
@@ -85,23 +42,24 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
                 <td colSpan={3}>Таблица не заполнена</td>
               </tr>
             ) : (
-              companies.slice(start, start + 9).map((com) => (
-                <tr key={com.id} className={selectedIds.includes(com.id) ? 'selected' : ''}>
+              companies.slice(start, start + VISIBLE_ROWS).map((company) => (
+                <tr key={company.id} className={selectedIds.includes(company.id) ? 'selected' : ''}>
                   <td>
                     <input
+                      name='select-current'
                       type='checkbox'
-                      checked={selectedIds.includes(com.id)}
-                      onChange={(e) => onChangeSelectRow(com.id, e.target.checked)}
+                      checked={selectedIds.includes(company.id)}
+                      onChange={(e) => onChangeSelectRow(company.id, e.target.checked)}
                     />
                   </td>
-                  <td>{com.name}</td>
-                  <td>{com.address}</td>
+                  <td>{company.name}</td>
+                  <td>{company.address}</td>
 
                   <td>
                     <div
                       className='menu'
                       onClick={(e) => {
-                        handleEditCompany(com, e)
+                        handleEditCompany(company, e)
                       }}
                     >
                       <span></span>
@@ -114,10 +72,10 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
             )}
           </tbody>
         </table>
-        <div style={{ height: getButtomHeight() }} />
+        <div style={{ height: getBottomHeight() }} />
       </div>
       {selectedCompany && (
-        <EditModal company={selectedCompany} onClose={handleCloseModal} onSave={handleSaveCompany} />
+        <EditModal selectedCompany={selectedCompany} onClose={handleCloseModal} onSave={handleSaveCompany} />
       )}
     </>
   )

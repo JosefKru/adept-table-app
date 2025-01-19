@@ -1,29 +1,16 @@
-import { useDispatch, useSelector } from 'react-redux'
 import './App.css'
 import CompanyTable from './components/CompanyTable/CompanyTable'
-import { RootState } from './store/store'
 import { addCompany, removeCompany } from './slices/companiesSlice'
-import { Company } from './components/types/models'
-import { useState } from 'react'
+import { Company } from './types/models'
 import ActionsButton from './components/ActionsButton/ActionsButton'
+import { useSelectedIds } from './hooks/useSelectedIds'
+import { useCallback } from 'react'
 
 function App() {
-  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const { resetSelection, selectedIds, companies, dispatch, handleSelectAll, handleSelectRow } =
+    useSelectedIds()
 
-  const companies = useSelector((state: RootState) => state.companies.companies)
-  const dispatch = useDispatch()
-
-  const handleSelectAll = (select: boolean) => {
-    setSelectedIds(select ? companies.map((item) => item.id) : [])
-  }
-
-  const handleSelectRow = (id: string, select: boolean) => {
-    setSelectedIds((prevState) =>
-      select ? [...prevState, id] : prevState.filter((selectedId) => selectedId !== id)
-    )
-  }
-
-  const handleAddCompany = () => {
+  const handleAddCompany = useCallback(() => {
     const nextValCom = companies.length + 1
     const newCompany: Company = {
       id: Date.now().toString(),
@@ -31,14 +18,14 @@ function App() {
       address: `Адрес ${nextValCom}`,
     }
     dispatch(addCompany(newCompany))
-  }
+  }, [companies.length, dispatch])
 
-  const handleRemoveCompany = () => {
+  const handleRemoveCompany = useCallback(() => {
     selectedIds.forEach((id) => {
       dispatch(removeCompany(id))
     })
-    setSelectedIds([])
-  }
+    resetSelection()
+  }, [selectedIds, resetSelection, dispatch])
 
   return (
     <>
