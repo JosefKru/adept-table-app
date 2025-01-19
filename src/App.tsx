@@ -50,13 +50,12 @@ function App() {
           onChangeSelectAll={handleSelectAll}
           companies={companies}
         />
-        <ActionsButton onAddCompany={handleAddCompany} onRemoveCompany={handleRemoveCompany} selectedIds={selectedIds} />
+        <ActionsButton
+          onAddCompany={handleAddCompany}
+          onRemoveCompany={handleRemoveCompany}
+          selectedIds={selectedIds}
+        />
       </div>
-      <p className='description'>
-        <strong>Динамическая подгрузка столбцов:</strong> изначально отображается 3 столбца (с лимитом в 15
-        видимых записей), а при добавлении новых записей и достижении конца списка автоматически подгружаются
-        по 10 дополнительных записей. Так же, нажав на три точки, можно редактировать выбранный столбец.
-      </p>
     </>
   )
 }
