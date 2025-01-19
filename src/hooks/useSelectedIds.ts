@@ -1,12 +1,11 @@
 import { useState, useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { RootState } from '../store/store'
 
 export function useSelectedIds() {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   const companies = useSelector((state: RootState) => state.companies.companies)
-  const dispatch = useDispatch()
 
   const handleSelectRow = useCallback(
     (id: string, select: boolean) => {
@@ -38,7 +37,5 @@ export function useSelectedIds() {
     setSelectedIds,
     selectedIds,
     resetSelection,
-    companies,
-    dispatch,
   }
 }

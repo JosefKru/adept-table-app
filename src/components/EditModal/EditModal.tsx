@@ -29,10 +29,11 @@ const EditModal = ({ selectedCompany, onClose, onSave }: IEditModalProps) => {
       <div className='modal-content'>
         <h3>Редактор компании</h3>
         <form id='form-modal' name='form-modal' onSubmit={handleSubmit}>
-          <label htmlFor='name'>
+          <label htmlFor='organization'>
             Название:
             <input
-              id='name'
+              autoComplete='organization'
+              id='organization'
               value={newValues.name}
               onChange={(e) => setNewValues({ ...newValues, name: e.target.value })}
               required
@@ -42,6 +43,7 @@ const EditModal = ({ selectedCompany, onClose, onSave }: IEditModalProps) => {
           <label htmlFor='address'>
             Адрес:
             <input
+              autoComplete='address'
               id='address'
               value={newValues.address}
               onChange={(e) => setNewValues({ ...newValues, address: e.target.value })}

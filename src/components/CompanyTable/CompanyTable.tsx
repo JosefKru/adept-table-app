@@ -1,21 +1,29 @@
 import EditModal from '../EditModal/EditModal'
 import './CompanyTable.css'
-import { Company } from '../../types/models'
-import { VISIBLE_ROWS } from '../../variables/const'
+import { VISIBLE_ROWS } from '../../variables/consts'
 import { useVirtualScroll } from '../../hooks/useVirtualScroll'
 import { useModal } from '../../hooks/useModal'
+import { memo, useMemo } from 'react'
+import TableRow from '../TableRow/TableRow'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
 
 interface IProps {
   selectedIds: string[]
   onChangeSelectAll: (select: boolean) => void
   onChangeSelectRow: (id: string, select: boolean) => void
-  companies: Company[]
 }
 
-const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, companies }: IProps) => {
+const CompanyTable = memo(({ selectedIds, onChangeSelectAll, onChangeSelectRow }: IProps) => {
+  const companies = useSelector((state: RootState) => state.companies.companies)
+
   const { start, tableRef, getTopHeight, getBottomHeight } = useVirtualScroll(companies.length)
 
   const { selectedCompany, handleCloseModal, handleSaveCompany, handleEditCompany } = useModal()
+
+  const isAllChecked = useMemo(() => {
+    return selectedIds.length === companies.length && companies.length !== 0
+  }, [selectedIds.length, companies.length])
 
   return (
     <>
@@ -29,7 +37,7 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
                   name='select-all'
                   type='checkbox'
                   onChange={(e) => onChangeSelectAll(e.target.checked)}
-                  checked={selectedIds.length === companies.length && companies.length !== 0}
+                  checked={isAllChecked}
                 />
               </th>
               <th>Название компании</th>
@@ -42,33 +50,17 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
                 <td colSpan={3}>Таблица не заполнена</td>
               </tr>
             ) : (
-              companies.slice(start, start + VISIBLE_ROWS).map((company) => (
-                <tr key={company.id} className={selectedIds.includes(company.id) ? 'selected' : ''}>
-                  <td>
-                    <input
-                      name='select-current'
-                      type='checkbox'
-                      checked={selectedIds.includes(company.id)}
-                      onChange={(e) => onChangeSelectRow(company.id, e.target.checked)}
-                    />
-                  </td>
-                  <td>{company.name}</td>
-                  <td>{company.address}</td>
-
-                  <td>
-                    <div
-                      className='menu'
-                      onClick={(e) => {
-                        handleEditCompany(company, e)
-                      }}
-                    >
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </div>
-                  </td>
-                </tr>
-              ))
+              companies
+                .slice(start, start + VISIBLE_ROWS)
+                .map((company) => (
+                  <TableRow
+                    key={company.id}
+                    company={company}
+                    selectedIds={selectedIds}
+                    onChangeSelectRow={onChangeSelectRow}
+                    handleEditCompany={handleEditCompany}
+                  />
+                ))
             )}
           </tbody>
         </table>
@@ -79,6 +71,6 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
       )}
     </>
   )
-}
+})
 
 export default CompanyTable

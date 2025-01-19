@@ -2,11 +2,12 @@ import { useState, useCallback } from 'react'
 import { Company } from '../types/models'
 import { useDispatch } from 'react-redux'
 import { editCompany } from '../slices/companiesSlice'
+import { AppDispatch } from '../store/store'
 
 export function useModal() {
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
 
-  const dispatch = useDispatch()
+  const dispatch: AppDispatch = useDispatch()
 
   const handleCloseModal = useCallback(() => setSelectedCompany(null), [])
 
@@ -22,9 +23,10 @@ export function useModal() {
     (company: Company) => {
       if (company) {
         dispatch(editCompany(company))
+        handleCloseModal()
       }
     },
-    [dispatch]
+    [dispatch, handleCloseModal]
   )
 
   return {

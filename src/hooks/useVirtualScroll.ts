@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { ROW_HEIGHT, VISIBLE_ROWS } from '../variables/const'
+import { ROW_HEIGHT, VISIBLE_ROWS } from '../variables/consts'
 
 export function useVirtualScroll(totalItems: number) {
   const [start, setStart] = useState<number>(0)
