@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import EditModal from '../EditModal/EditModal'
 import './CompanyTable.css'
 import { useDispatch } from 'react-redux'
 import { Company } from '../types/models'
 import { editCompany } from '../../slices/companiesSlice'
+import { ROW_HEIGHT, VISIBLE_ROWS } from '../../variables/const'
 
 interface IProps {
   selectedIds: string[]
@@ -14,15 +15,11 @@ interface IProps {
 
 const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, companies }: IProps) => {
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
-  const [limit, setLimit] = useState(15)
-  const [visibleCompanies, setVisibleCompanies] = useState<Company[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [start, setStart] = useState(0)
+
+  const tableRef = useRef<HTMLDivElement | null>(null)
 
   const dispatch = useDispatch()
-
-  useEffect(() => {
-    setVisibleCompanies(companies.slice(0, limit))
-  }, [limit, companies])
 
   const handleSaveCompany = (company: Company) => {
     if (company) {
@@ -30,17 +27,22 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
     }
   }
 
-  const handleScroll = (e: React.UIEvent) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget
+  useEffect(() => {
+    const element = tableRef.current
 
-    if (scrollTop + clientHeight >= scrollHeight - 10 && !isLoading && limit !== companies.length) {
-      setIsLoading(true)
-      setTimeout(() => {
-        setLimit((prevLimit) => Math.min(prevLimit + 10, companies.length))
-        setIsLoading(false)
-      }, 1000)
+    if (element) {
+      const handleScroll = (event: Event) => {
+        const target = event.target as HTMLDivElement
+        setStart(Math.floor(target.scrollTop / ROW_HEIGHT))
+      }
+
+      element.addEventListener('scroll', handleScroll)
+
+      return () => {
+        element.removeEventListener('scroll', handleScroll)
+      }
     }
-  }
+  }, [companies])
 
   const handleCloseModal = () => {
     setSelectedCompany(null)
@@ -51,10 +53,19 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
     setSelectedCompany(company)
   }
 
+  const getTopHeight = () => {
+    return ROW_HEIGHT * start
+  }
+
+  const getButtomHeight = () => {
+    return ROW_HEIGHT * (companies.length - (start + VISIBLE_ROWS))
+  }
+
   return (
     <>
-      <div className='scrollbar' onScroll={handleScroll}>
-        <table>
+      <div className='table-container' ref={tableRef}>
+        <div style={{ height: getTopHeight() }} />
+        <table className='company-table'>
           <thead>
             <tr>
               <th>
@@ -74,7 +85,7 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
                 <td colSpan={3}>Таблица не заполнена</td>
               </tr>
             ) : (
-              visibleCompanies.map((com) => (
+              companies.slice(start, start + 9).map((com) => (
                 <tr key={com.id} className={selectedIds.includes(com.id) ? 'selected' : ''}>
                   <td>
                     <input
@@ -103,10 +114,10 @@ const CompanyTable = ({ selectedIds, onChangeSelectAll, onChangeSelectRow, compa
             )}
           </tbody>
         </table>
-        {isLoading && <div className='loading-indicator'>Загрузка...</div>}
+        <div style={{ height: getButtomHeight() }} />
       </div>
       {selectedCompany && (
-        <EditModal company={selectedCompany} onClose={handleCloseModal} onSave={handleSaveCompany}  />
+        <EditModal company={selectedCompany} onClose={handleCloseModal} onSave={handleSaveCompany} />
       )}
     </>
   )

@@ -1,13 +1,15 @@
 table {
-  width: 500px;
   border-collapse: collapse;
   margin: 10px 0px;
   text-align: left;
+  position: relative;
 }
 
 thead tr {
   background-color: #515151;
   border-bottom: 1px solid #cac3c3;
+  position: sticky;
+  top: 0;
 }
 
 thead th {
@@ -17,6 +19,8 @@ thead th {
 
 tbody tr {
   border-bottom: 1px solid #cac3c3;
+  white-space: wrap;
+  height: 50px;
 }
 
 tbody tr:hover {
@@ -26,6 +30,18 @@ tbody tr:hover {
 td,
 th {
   padding: 10px;
+}
+
+.table-container {
+  height: 500px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.company-table {
+  width: 500px;
+  border-collapse: collapse;
+  white-space: nowrap;
 }
 
 .selected {
@@ -51,10 +67,4 @@ th {
 
 .menu:hover span {
   background-color: #2a2a2a;
-}
-
-.scrollbar {
-  padding: 20px;
-  overflow-y: auto;
-  height: 450px;
 }
